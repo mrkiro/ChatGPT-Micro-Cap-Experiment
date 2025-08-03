@@ -11,6 +11,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "inquirer": "^8.2.6"
+    "inquirer": "^8.2.6",
+    "yahoo-finance2": "^2.13.3"
   }
 }

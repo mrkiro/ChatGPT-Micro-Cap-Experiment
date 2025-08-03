@@ -1,0 +1,16 @@
+{
+  "name": "chatgpt-micro-cap-experiment",
+  "version": "1.0.0",
+  "description": "Welcome to the repo behind my 6-month live trading experiment where ChatGPT manages a real-money micro-cap portfolio.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node -e \"console.log(\\\"No tests specified\\\")\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "inquirer": "^8.2.6"
+  }
+}

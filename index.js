@@ -22,10 +22,11 @@ async function loadCurrentPortfolio(dataDir) {
   return { holdings, cash };
 }
 
-async function runPortfolio(startingCash, dataDir) {
+async function runPortfolio(startingCash, dataDir, opts = {}) {
+  const { interactive = true } = opts;
   const { holdings, cash } = await loadCurrentPortfolio(dataDir);
   const initialCash = typeof startingCash === 'number' ? startingCash : cash;
-  const result = await processPortfolio(holdings, initialCash, dataDir);
+  const result = await processPortfolio(holdings, initialCash, dataDir, { interactive });
   await dailyResults(dataDir);
   return result;
 }
@@ -36,7 +37,7 @@ async function runManual(dataDir) {
 }
 
 function parseArgs(argv) {
-  const opts = { manual: false };
+  const opts = { manual: false, interactive: true };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--cash' || a === '-c') {
@@ -45,6 +46,8 @@ function parseArgs(argv) {
       opts.dataDir = argv[++i];
     } else if (a === '--manual' || a === '-m') {
       opts.manual = true;
+    } else if (a === '--no-interactive' || a === '-n') {
+      opts.interactive = false;
     }
   }
   return opts;
@@ -52,11 +55,11 @@ function parseArgs(argv) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const dataDir = args.dataDir || path.join(__dirname, 'Scripts and CSV Files');
+  const dataDir = args.dataDir || process.env.DATA_DIR || path.join(__dirname, 'Scripts and CSV Files');
   if (args.manual) {
     await runManual(dataDir);
   } else {
-    await runPortfolio(args.cash, dataDir);
+    await runPortfolio(args.cash, dataDir, { interactive: args.interactive });
   }
 }
 

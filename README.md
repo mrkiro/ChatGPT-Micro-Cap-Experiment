@@ -79,3 +79,69 @@ One final shameless plug: (https://substack.com/@nathanbsmith?utm_source=edit-pr
 
 Find a mistake in the logs or have advice?
 Please Reach out here: nathanbsmith.business@gmail.com
+
+## Automation & Deployment
+
+### Non-interactive Mode
+
+Run the daily portfolio update without any prompts by passing `--no-interactive`:
+
+```bash
+node index.js --no-interactive
+```
+
+Use `--data` or the `DATA_DIR` environment variable to choose where CSV files are stored:
+
+```bash
+DATA_DIR=/path/to/data node index.js --no-interactive
+```
+
+### Scheduling
+
+#### Using cron
+
+Schedule the script on a Linux server with `crontab -e`:
+
+```
+0 20 * * 1-5 /usr/bin/node /opt/app/index.js --no-interactive >> /var/log/portfolio.log 2>&1
+```
+
+This example runs at 8 PM Monday–Friday.
+
+#### Using node-cron
+
+Add [node-cron](https://www.npmjs.com/package/node-cron) and create a small wrapper:
+
+```js
+const cron = require('node-cron');
+const { main } = require('./index');
+
+cron.schedule('0 20 * * 1-5', () => main(['--no-interactive']));
+```
+
+### Environment Variables
+
+Configuration can be supplied via environment variables:
+
+- `DATA_DIR` – directory for CSV data (defaults to `Scripts and CSV Files`).
+- `API_KEY` – placeholder for any future data-provider keys.
+
+Set them in your shell or via a `.env` file:
+
+```bash
+export DATA_DIR=/data/chatgpt
+export API_KEY=your-key-here
+```
+
+### Containerization
+
+A minimal `Dockerfile` is included for deployment on a VPS or PaaS.
+
+Build and run the image:
+
+```bash
+docker build -t micro-cap .
+docker run -e DATA_DIR=/data -v $(pwd)/data:/data micro-cap
+```
+
+Use the platform's scheduler (e.g., cron, Kubernetes CronJob, PaaS tasks) to trigger the container at your desired interval.

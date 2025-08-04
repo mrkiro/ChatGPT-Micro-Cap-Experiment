@@ -2,8 +2,16 @@ const fs = require('fs');
 const path = require('path');
 const inquirer = require('inquirer');
 
-const portfolioPath = path.join(__dirname, '..', 'Scripts and CSV Files', 'chatgpt_portfolio_update.csv');
-const tradeLogPath = path.join(__dirname, '..', 'Scripts and CSV Files', 'chatgpt_trade_log.csv');
+let DATA_DIR = path.join(__dirname, '..', 'Scripts and CSV Files');
+let portfolioPath = path.join(DATA_DIR, 'chatgpt_portfolio_update.csv');
+let tradeLogPath = path.join(DATA_DIR, 'chatgpt_trade_log.csv');
+
+function setDataDir(dir) {
+  DATA_DIR = path.resolve(dir);
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  portfolioPath = path.join(DATA_DIR, 'chatgpt_portfolio_update.csv');
+  tradeLogPath = path.join(DATA_DIR, 'chatgpt_trade_log.csv');
+}
 
 function loadPortfolio() {
   const text = fs.readFileSync(portfolioPath, 'utf8').trim();
@@ -174,4 +182,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { logManualBuy, logManualSell };
+module.exports = { logManualBuy, logManualSell, main, setDataDir };

@@ -8,14 +8,17 @@ async function ask(question) {
   return new Promise(resolve => rl.question(question, ans => { rl.close(); resolve(ans); }));
 }
 
-async function processPortfolio(portfolio, startingCash, dataDir = path.join(__dirname, 'Scripts and CSV Files')) {
+async function processPortfolio(portfolio, startingCash, dataDir = path.join(__dirname, 'Scripts and CSV Files'), opts = {}) {
+  const { interactive = true } = opts;
   setDataDir(dataDir);
   const today = new Date().toISOString().slice(0, 10);
   const day = new Date().getDay();
 
   if (day === 0 || day === 6) {
-    const response = await ask(`Today is currently a weekend, so markets were never open.\nThis will cause the program to calculate data from the last day (usually Friday), and save it as today.\nAre you sure you want to do this? To exit, enter 1.`);
-    if (response.trim() === '1') throw new Error('Exiting program.');
+    if (interactive) {
+      const response = await ask(`Today is currently a weekend, so markets were never open.\nThis will cause the program to calculate data from the last day (usually Friday), and save it as today.\nAre you sure you want to do this? To exit, enter 1.`);
+      if (response.trim() === '1') throw new Error('Exiting program.');
+    }
   }
 
   const results = [];
